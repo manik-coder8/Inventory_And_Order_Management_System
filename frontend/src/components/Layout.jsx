@@ -9,52 +9,70 @@ const navItems = [
 
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-paper">
       <div className="flex">
-        <aside className="fixed inset-y-0 left-0 z-20 hidden w-60 flex-col border-r border-slate-200 bg-white md:flex">
-          <div className="flex h-16 items-center gap-2 border-b border-slate-200 px-5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-600 text-white font-bold text-sm">
+        <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col bg-ink-900 md:flex">
+          <div className="h-1 tape-edge" />
+          <div className="flex h-20 items-center gap-3 px-6">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border-2 border-signal text-signal font-display font-semibold text-sm rotate-[-2deg]">
               IO
             </div>
-            <span className="text-sm font-semibold text-slate-900">Inventory & Orders</span>
+            <div className="leading-tight">
+              <p className="font-display text-base font-semibold text-paper">Ledger</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-400">Inventory &amp; Orders</p>
+            </div>
           </div>
-          <nav className="flex-1 space-y-1 px-3 py-4">
+
+          <nav className="flex-1 space-y-1 px-4 py-2">
             {navItems.map(({ to, label, icon: Icon, end }) => (
               <NavLink
                 key={to}
                 to={to}
                 end={end}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                    isActive ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-100'
+                  `group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                    isActive ? 'bg-paper/[0.08] text-paper' : 'text-ink-400 hover:bg-paper/[0.05] hover:text-paper'
                   }`
                 }
               >
-                <Icon className="h-5 w-5 shrink-0" />
-                {label}
+                {({ isActive }) => (
+                  <>
+                    <span className={`h-1.5 w-1.5 shrink-0 rounded-full transition-colors ${isActive ? 'bg-signal' : 'bg-transparent'}`} />
+                    <Icon className="h-[18px] w-[18px] shrink-0" />
+                    {label}
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>
+
+          <div className="border-t border-paper/10 px-6 py-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-500">System status</p>
+            <p className="mt-1.5 flex items-center gap-2 text-xs text-ink-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-forest" />
+              Connected
+            </p>
+          </div>
         </aside>
 
         {/* Mobile top bar */}
-        <header className="fixed inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-brand-600 text-white font-bold text-xs">
+        <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between bg-ink-900 px-4 md:hidden">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-sm border-2 border-signal text-signal font-display font-semibold text-xs rotate-[-2deg]">
               IO
             </div>
-            <span className="text-sm font-semibold text-slate-900">Inventory & Orders</span>
+            <span className="font-display text-sm font-semibold text-paper">Ledger</span>
           </div>
         </header>
-        <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-slate-200 bg-white md:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-20 flex border-t border-ink-900/10 bg-ink-900 md:hidden">
           {navItems.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium ${
-                  isActive ? 'text-brand-700' : 'text-slate-500'
+                `flex flex-1 flex-col items-center gap-1 py-2.5 text-[10px] font-medium uppercase tracking-wide ${
+                  isActive ? 'text-signal' : 'text-ink-400'
                 }`
               }
             >
@@ -64,7 +82,7 @@ export default function Layout({ children }) {
           ))}
         </nav>
 
-        <main className="flex-1 px-4 pb-20 pt-16 md:ml-60 md:px-8 md:pb-8 md:pt-8">
+        <main className="flex-1 px-4 pb-24 pt-20 md:ml-64 md:px-10 md:pb-10 md:pt-10">
           <div className="mx-auto max-w-6xl">{children}</div>
         </main>
       </div>

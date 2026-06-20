@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getOrders, getCustomers, getProducts, createOrder, cancelOrder } from '../api/endpoints'
-import { Card, Button, Badge, Select, Input, EmptyState, Spinner, Alert } from '../components/ui'
+import { Card, Button, Badge, Select, Input, EmptyState, Spinner, Alert, SectionEyebrow } from '../components/ui'
 
 export default function Orders() {
   const [orders, setOrders] = useState([])
@@ -46,12 +46,14 @@ export default function Orders() {
 
   return (
     <div>
-      <header className="mb-6 flex items-center justify-between">
+      <header className="mb-8 flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Orders</h1>
-          <p className="mt-1 text-sm text-slate-500">Create orders and track fulfillment.</p>
+          <SectionEyebrow>Fulfillment</SectionEyebrow>
+          <h1 className="mt-1.5 font-display text-3xl font-semibold text-ink-900">Orders</h1>
+          <p className="mt-1.5 text-sm text-ink-500">Create orders and track fulfillment.</p>
         </div>
         <Button
+          variant="signal"
           onClick={() => setFormOpen(true)}
           disabled={customers.length === 0 || products.length === 0}
         >
@@ -87,15 +89,15 @@ export default function Orders() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-16 text-slate-400">
+        <div className="flex justify-center py-20 text-ink-400">
           <Spinner className="h-6 w-6" />
         </div>
       ) : orders.length === 0 ? (
         <EmptyState title="No orders yet" description="Orders you create will show up here." />
       ) : (
         <div className="space-y-3">
-          {orders.map((order) => (
-            <OrderCard key={order.id} order={order} onCancel={handleCancel} />
+          {orders.map((order, i) => (
+            <OrderCard key={order.id} order={order} onCancel={handleCancel} delay={i} />
           ))}
         </div>
       )}
@@ -103,41 +105,44 @@ export default function Orders() {
   )
 }
 
-function OrderCard({ order, onCancel }) {
+function OrderCard({ order, onCancel, delay = 0 }) {
   const [expanded, setExpanded] = useState(false)
   const statusTone = { pending: 'amber', confirmed: 'green', cancelled: 'red' }[order.status] || 'slate'
 
   return (
-    <Card className="overflow-hidden">
+    <Card
+      className="overflow-hidden animate-fade-up"
+      style={{ animationDelay: `${Math.min(delay, 6) * 40}ms` }}
+    >
       <button
-        className="flex w-full items-center justify-between px-5 py-4 text-left"
+        className="flex w-full items-center justify-between px-6 py-4 text-left"
         onClick={() => setExpanded((e) => !e)}
       >
         <div className="flex items-center gap-4">
-          <span className="text-sm font-semibold text-slate-900">Order #{order.id}</span>
+          <span className="font-mono text-sm font-semibold text-ink-900">#{String(order.id).padStart(4, '0')}</span>
           <Badge tone={statusTone}>{order.status}</Badge>
-          <span className="text-sm text-slate-500">{order.customer?.full_name}</span>
+          <span className="text-sm text-ink-500">{order.customer?.full_name}</span>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm font-semibold text-slate-900">${Number(order.total_amount).toFixed(2)}</span>
-          <span className="text-slate-400">{expanded ? '\u2212' : '+'}</span>
+          <span className="font-mono text-sm font-semibold text-ink-900">${Number(order.total_amount).toFixed(2)}</span>
+          <span className={`text-ink-400 transition-transform ${expanded ? 'rotate-45' : ''}`}>+</span>
         </div>
       </button>
 
       {expanded && (
-        <div className="border-t border-slate-100 px-5 py-4">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">Items</p>
+        <div className="border-t border-ink-900/[0.08] px-6 py-4">
+          <p className="mb-2 font-mono text-[11px] uppercase tracking-wide text-ink-400">Items</p>
           <ul className="mb-4 space-y-1.5">
             {order.items.map((item) => (
-              <li key={item.id} className="flex justify-between text-sm">
-                <span className="text-slate-700">
+              <li key={item.id} className="ledger-row flex justify-between py-1.5 text-sm">
+                <span className="text-ink-700">
                   {item.product?.name || `Product #${item.product_id}`} &times; {item.quantity}
                 </span>
-                <span className="text-slate-500">${(Number(item.unit_price) * item.quantity).toFixed(2)}</span>
+                <span className="font-mono text-ink-500">${(Number(item.unit_price) * item.quantity).toFixed(2)}</span>
               </li>
             ))}
           </ul>
-          <div className="flex items-center justify-between text-sm text-slate-500">
+          <div className="flex items-center justify-between text-sm text-ink-500">
             <span>Placed {new Date(order.created_at).toLocaleString()}</span>
             {order.status !== 'cancelled' && (
               <Button variant="danger" className="px-2.5 py-1" onClick={() => onCancel(order)}>
@@ -194,10 +199,10 @@ function CreateOrderForm({ customers, products, onClose, onCreated, onError }) {
   }
 
   return (
-    <Card className="mb-6 p-5">
-      <h2 className="mb-4 text-sm font-semibold text-slate-900">Create a new order</h2>
+    <Card className="mb-6 p-6 animate-fade-up">
+      <h2 className="mb-5 font-display text-lg font-semibold text-ink-900">Create a new order</h2>
       {localError && <div className="mb-4"><Alert>{localError}</Alert></div>}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <Select label="Customer" value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
           {customers.map((c) => (
             <option key={c.id} value={c.id}>{c.full_name} ({c.email})</option>
@@ -205,7 +210,7 @@ function CreateOrderForm({ customers, products, onClose, onCreated, onError }) {
         </Select>
 
         <div>
-          <p className="mb-2 text-sm font-medium text-slate-700">Products</p>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-500">Products</p>
           <div className="space-y-3">
             {lines.map((line, idx) => {
               const product = productById(line.product_id)
@@ -249,13 +254,13 @@ function CreateOrderForm({ customers, products, onClose, onCreated, onError }) {
           </Button>
         </div>
 
-        <div className="flex items-center justify-between rounded-md bg-slate-50 px-4 py-3">
-          <span className="text-sm font-medium text-slate-700">Estimated total</span>
-          <span className="text-sm font-semibold text-slate-900">${estimatedTotal.toFixed(2)}</span>
+        <div className="flex items-center justify-between rounded-md border border-dashed border-ink-900/15 bg-paper-dim/50 px-4 py-3">
+          <span className="text-sm font-medium text-ink-700">Estimated total</span>
+          <span className="font-mono text-base font-semibold text-ink-900">${estimatedTotal.toFixed(2)}</span>
         </div>
 
         <div className="flex gap-3">
-          <Button type="submit" disabled={submitting}>
+          <Button type="submit" variant="signal" disabled={submitting}>
             {submitting && <Spinner className="h-4 w-4" />}
             Create order
           </Button>

@@ -1,18 +1,20 @@
 export function Card({ children, className = '' }) {
   return (
-    <div className={`bg-white rounded-lg border border-slate-200 shadow-sm ${className}`}>
+    <div className={`bg-paper-card rounded-lg border border-ink-900/[0.08] shadow-card ${className}`}>
       {children}
     </div>
   )
 }
 
 export function Button({ children, variant = 'primary', className = '', ...props }) {
-  const base = 'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
+  const base =
+    'inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium tracking-[0.01em] transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-signal focus-visible:outline-offset-2'
   const variants = {
-    primary: 'bg-brand-600 text-white hover:bg-brand-700 focus-visible:ring-brand-600',
-    secondary: 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 focus-visible:ring-slate-400',
-    danger: 'bg-white text-red-600 border border-red-200 hover:bg-red-50 focus-visible:ring-red-500',
-    ghost: 'text-slate-600 hover:bg-slate-100 focus-visible:ring-slate-400',
+    primary: 'bg-ink-900 text-paper hover:bg-ink-800 active:scale-[0.98] shadow-card',
+    signal: 'bg-signal text-white hover:bg-signal-600 active:scale-[0.98] shadow-card',
+    secondary: 'bg-paper-card text-ink-800 border border-ink-900/15 hover:border-ink-900/30 hover:bg-paper-dim',
+    danger: 'bg-paper-card text-rust border border-rust/25 hover:bg-rust-50',
+    ghost: 'text-ink-500 hover:bg-ink-900/[0.05] hover:text-ink-800',
   }
   return (
     <button className={`${base} ${variants[variant]} ${className}`} {...props}>
@@ -23,14 +25,22 @@ export function Button({ children, variant = 'primary', className = '', ...props
 
 export function Badge({ children, tone = 'slate' }) {
   const tones = {
-    slate: 'bg-slate-100 text-slate-700',
-    green: 'bg-emerald-100 text-emerald-700',
-    red: 'bg-red-100 text-red-700',
-    amber: 'bg-amber-100 text-amber-700',
-    blue: 'bg-brand-100 text-brand-700',
+    slate: 'bg-ink-900/[0.06] text-ink-600',
+    green: 'bg-forest-50 text-forest-600',
+    red: 'bg-rust-50 text-rust-600',
+    amber: 'bg-signal-50 text-signal-700',
+    blue: 'bg-ink-900/[0.06] text-ink-700',
   }
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${tones[tone]}`}>
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium font-mono tracking-tight ${tones[tone]}`}>
+      {children}
+    </span>
+  )
+}
+
+export function SkuTag({ children }) {
+  return (
+    <span className="sku-tag inline-flex items-center rounded-sm bg-paper-dim px-2 py-0.5 text-xs text-ink-600">
       {children}
     </span>
   )
@@ -39,14 +49,14 @@ export function Badge({ children, tone = 'slate' }) {
 export function Input({ label, error, className = '', ...props }) {
   return (
     <label className="block">
-      {label && <span className="mb-1.5 block text-sm font-medium text-slate-700">{label}</span>}
+      {label && <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-500">{label}</span>}
       <input
-        className={`w-full rounded-md border px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
-          error ? 'border-red-300' : 'border-slate-300'
+        className={`w-full rounded-md border bg-paper-card px-3 py-2 text-sm text-ink-800 placeholder:text-ink-400 transition-colors focus:outline-none focus:ring-2 focus:ring-signal/40 focus:border-signal ${
+          error ? 'border-rust/40' : 'border-ink-900/15'
         } ${className}`}
         {...props}
       />
-      {error && <span className="mt-1 block text-xs text-red-600">{error}</span>}
+      {error && <span className="mt-1 block text-xs text-rust">{error}</span>}
     </label>
   )
 }
@@ -54,26 +64,26 @@ export function Input({ label, error, className = '', ...props }) {
 export function Select({ label, error, children, className = '', ...props }) {
   return (
     <label className="block">
-      {label && <span className="mb-1.5 block text-sm font-medium text-slate-700">{label}</span>}
+      {label && <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-500">{label}</span>}
       <select
-        className={`w-full rounded-md border px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 ${
-          error ? 'border-red-300' : 'border-slate-300'
+        className={`w-full rounded-md border bg-paper-card px-3 py-2 text-sm text-ink-800 transition-colors focus:outline-none focus:ring-2 focus:ring-signal/40 focus:border-signal ${
+          error ? 'border-rust/40' : 'border-ink-900/15'
         } ${className}`}
         {...props}
       >
         {children}
       </select>
-      {error && <span className="mt-1 block text-xs text-red-600">{error}</span>}
+      {error && <span className="mt-1 block text-xs text-rust">{error}</span>}
     </label>
   )
 }
 
 export function EmptyState({ title, description, action }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 px-6 py-16 text-center">
-      <p className="text-sm font-medium text-slate-900">{title}</p>
-      {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
-      {action && <div className="mt-4">{action}</div>}
+    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-ink-900/15 bg-paper-dim/40 px-6 py-16 text-center">
+      <p className="font-display text-lg text-ink-800">{title}</p>
+      {description && <p className="mt-1.5 text-sm text-ink-500">{description}</p>}
+      {action && <div className="mt-5">{action}</div>}
     </div>
   )
 }
@@ -89,13 +99,21 @@ export function Spinner({ className = '' }) {
 
 export function Alert({ tone = 'red', children }) {
   const tones = {
-    red: 'bg-red-50 text-red-700 border-red-200',
-    green: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    amber: 'bg-amber-50 text-amber-700 border-amber-200',
+    red: 'bg-rust-50 text-rust-600 border-rust/20',
+    green: 'bg-forest-50 text-forest-600 border-forest/20',
+    amber: 'bg-signal-50 text-signal-700 border-signal/25',
   }
   return (
-    <div className={`rounded-md border px-4 py-3 text-sm ${tones[tone]}`} role="alert">
+    <div className={`rounded-md border px-4 py-3 text-sm animate-fade-up ${tones[tone]}`} role="alert">
       {children}
     </div>
+  )
+}
+
+export function SectionEyebrow({ children }) {
+  return (
+    <span className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ink-400">
+      {children}
+    </span>
   )
 }

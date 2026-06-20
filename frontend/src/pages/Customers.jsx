@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getCustomers, createCustomer, deleteCustomer } from '../api/endpoints'
-import { Card, Button, Input, EmptyState, Spinner, Alert } from '../components/ui'
+import { Card, Button, Input, EmptyState, Spinner, Alert, SectionEyebrow } from '../components/ui'
 
 const emptyForm = { full_name: '', email: '', phone_number: '' }
 
@@ -74,14 +74,21 @@ export default function Customers() {
     }
   }
 
+  const initials = (name) =>
+    name.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join('')
+
   return (
     <div>
-      <header className="mb-6 flex items-center justify-between">
+      <header className="mb-8 flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">Customers</h1>
-          <p className="mt-1 text-sm text-slate-500">Manage the people who place your orders.</p>
+          <SectionEyebrow>Contacts</SectionEyebrow>
+          <h1 className="mt-1.5 font-display text-3xl font-semibold text-ink-900">Customers</h1>
+          <p className="mt-1.5 text-sm text-ink-500">Manage the people who place your orders.</p>
         </div>
-        <Button onClick={() => { setForm(emptyForm); setFormErrors({}); setFormOpen(true) }}>
+        <Button
+          variant="signal"
+          onClick={() => { setForm(emptyForm); setFormErrors({}); setFormOpen(true) }}
+        >
           + Add customer
         </Button>
       </header>
@@ -90,8 +97,8 @@ export default function Customers() {
       {successMsg && <div className="mb-4"><Alert tone="green">{successMsg}</Alert></div>}
 
       {formOpen && (
-        <Card className="mb-6 p-5">
-          <h2 className="mb-4 text-sm font-semibold text-slate-900">Add a new customer</h2>
+        <Card className="mb-6 p-6 animate-fade-up">
+          <h2 className="mb-5 font-display text-lg font-semibold text-ink-900">Add a new customer</h2>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Input
               label="Full name"
@@ -113,7 +120,7 @@ export default function Customers() {
               error={formErrors.phone_number}
             />
             <div className="flex gap-3 sm:col-span-3">
-              <Button type="submit" disabled={submitting}>
+              <Button type="submit" variant="signal" disabled={submitting}>
                 {submitting && <Spinner className="h-4 w-4" />}
                 Add customer
               </Button>
@@ -126,33 +133,40 @@ export default function Customers() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-16 text-slate-400">
+        <div className="flex justify-center py-20 text-ink-400">
           <Spinner className="h-6 w-6" />
         </div>
       ) : customers.length === 0 ? (
         <EmptyState
           title="No customers yet"
           description="Add your first customer to start creating orders."
-          action={<Button onClick={() => setFormOpen(true)}>+ Add customer</Button>}
+          action={<Button variant="signal" onClick={() => setFormOpen(true)}>+ Add customer</Button>}
         />
       ) : (
         <Card className="overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
+            <thead className="border-b border-ink-900/[0.08] bg-paper-dim/60 text-left">
               <tr>
-                <th className="px-5 py-3">Name</th>
-                <th className="px-5 py-3">Email</th>
-                <th className="px-5 py-3">Phone</th>
-                <th className="px-5 py-3 text-right">Actions</th>
+                <th className="px-6 py-3 font-mono text-[11px] font-medium uppercase tracking-wide text-ink-400">Customer</th>
+                <th className="px-6 py-3 font-mono text-[11px] font-medium uppercase tracking-wide text-ink-400">Email</th>
+                <th className="px-6 py-3 font-mono text-[11px] font-medium uppercase tracking-wide text-ink-400">Phone</th>
+                <th className="px-6 py-3 text-right font-mono text-[11px] font-medium uppercase tracking-wide text-ink-400">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody>
               {customers.map((c) => (
-                <tr key={c.id}>
-                  <td className="px-5 py-3 font-medium text-slate-900">{c.full_name}</td>
-                  <td className="px-5 py-3 text-slate-500">{c.email}</td>
-                  <td className="px-5 py-3 text-slate-500">{c.phone_number}</td>
-                  <td className="px-5 py-3 text-right">
+                <tr key={c.id} className="ledger-row transition-colors hover:bg-paper-dim/40">
+                  <td className="px-6 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink-900 font-mono text-[11px] font-medium text-paper">
+                        {initials(c.full_name) || '–'}
+                      </span>
+                      <span className="font-medium text-ink-900">{c.full_name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-3.5 text-ink-500">{c.email}</td>
+                  <td className="px-6 py-3.5 font-mono text-ink-500">{c.phone_number}</td>
+                  <td className="px-6 py-3.5 text-right">
                     <Button variant="danger" className="px-2.5 py-1" onClick={() => handleDelete(c)}>
                       Delete
                     </Button>

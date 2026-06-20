@@ -21,3 +21,4 @@ export const cancelOrder = (id) => api.delete(`/orders/${id}`)
 
 // ---- Dashboard ----
 export const getDashboardSummary = () => api.get('/dashboard/summary').then((r) => r.data)
+export const getDashboardCharts = () => api.get('/dashboard/charts').then((r) => r.data)
