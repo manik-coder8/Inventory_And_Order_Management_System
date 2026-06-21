@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Optional
 
 from pydantic import BaseModel, Field, ConfigDict
 
@@ -16,10 +17,10 @@ class ProductCreate(ProductBase):
 
 
 class ProductUpdate(BaseModel):
-    name: str | None = Field(None, min_length=1, max_length=255)
-    sku: str | None = Field(None, min_length=1, max_length=100)
-    price: Decimal | None = Field(None, ge=0)
-    quantity: int | None = Field(None, ge=0)
+    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    sku: Optional[str] = Field(None, min_length=1, max_length=100)
+    price: Optional[Decimal] = Field(None, ge=0)
+    quantity: Optional[int] = Field(None, ge=0)
 
 
 class ProductOut(ProductBase):

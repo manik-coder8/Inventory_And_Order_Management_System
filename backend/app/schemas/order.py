@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Optional
 
 from pydantic import BaseModel, Field, ConfigDict
 
@@ -25,7 +26,7 @@ class OrderItemOut(BaseModel):
     product_id: int
     quantity: int
     unit_price: Decimal
-    product: ProductOut | None = None
+    product: Optional[ProductOut] = None
 
 
 class OrderOut(BaseModel):
@@ -37,4 +38,4 @@ class OrderOut(BaseModel):
     status: OrderStatus
     created_at: datetime
     items: list[OrderItemOut] = []
-    customer: CustomerOut | None = None
+    customer: Optional[CustomerOut] = None
